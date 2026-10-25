@@ -300,11 +300,11 @@ document.getElementById('fuji-visibility').innerText = data.fuji;
 }
 window.switchMainTab = function(tab) {
 ['itinerary', 'hotel', 'expense', 'todolist'].forEach(t => {
-document.getElementById(⁠panel-${t}⁠).classList.add('hidden');
-document.getElementById(⁠tab-btn-${t}⁠).className = "py-2 rounded-lg transition opacity-70 font-bold";
+document.getElementById(`panel-${t}`).classList.add('hidden');
+document.getElementById(`tab-btn-${t}`).className = "py-2 rounded-lg transition opacity-70 font-bold";
 });
-document.getElementById(⁠panel-${tab}⁠).classList.remove('hidden');
-document.getElementById(⁠tab-btn-${tab}⁠).className = "py-2 rounded-lg transition font-bold bg-white shadow-sm opacity-100";
+document.getElementById(`panel-${tab}`).classList.remove('hidden');
+document.getElementById(`tab-btn-${tab}`).className = "py-2 rounded-lg transition font-bold bg-white shadow-sm opacity-100";
 if(tab === 'hotel') renderHotels();
 if(tab === 'expense') renderExpenses();
 if(tab === 'todolist') renderTodos();
@@ -314,7 +314,7 @@ const container = document.getElementById('day-tabs');
 let html = '';
 for (let i = 1; i <= 6; i++) {
 const active = i === window.currentDay ? 'border-b-2 border-orange-500 font-black opacity-100' : 'opacity-60';
-html += ⁠<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">Day ${i} (${dayDates[i]})</button>⁠;
+html += `<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">Day ${i} (${dayDates[i]})</button>`;
 }
 container.innerHTML = html;
 }
@@ -327,12 +327,12 @@ window.renderItinerary = function() {
 const container = document.getElementById('itinerary-timeline');
 const filtered = window.itineraries.filter(i => Number(i.day) === window.currentDay);
 if (filtered.length === 0) {
-container.innerHTML = ⁠<div class="jp-card p-5 text-center text-xs opacity-60 ml-1">本日尚無行程，點擊上方新增</div>⁠;
+container.innerHTML = `<div class="jp-card p-5 text-center text-xs opacity-60 ml-1">本日尚無行程，點擊上方新增</div>`;
 return;
 }
 container.innerHTML = filtered.map(item => {
-const mapBtn = item.map ? ⁠<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">地圖</a>⁠ : '';
-return ⁠<div class="relative pl-3"> <div class="absolute -left-[16px] top-3.5 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white"></div> <div class="jp-card p-3.5 space-y-1.5"> <div class="flex items-center justify-between border-b border-slate-100 pb-1.5"> <span class="text-xs font-bold">${item.time || '全天'}</span> <div class="flex items-center gap-2 text-xs"> ${mapBtn} <button onclick="deleteItinerary('${item.id}')" class="text-rose-500 font-bold">刪除</button> </div> </div> <h3 class="font-bold text-sm">${item.title}</h3> ${item.desc ?⁠<p class="text-xs opacity-75">${item.desc}</p>⁠: ''} </div> </div>⁠;
+const mapBtn = item.map ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">地圖</a>` : '';
+return `<div class="relative pl-3"> <div class="absolute -left-[16px] top-3.5 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white"></div> <div class="jp-card p-3.5 space-y-1.5"> <div class="flex items-center justify-between border-b border-slate-100 pb-1.5"> <span class="text-xs font-bold">${item.time || '全天'}</span> <div class="flex items-center gap-2 text-xs"> ${mapBtn} <button onclick="deleteItinerary('${item.id}')" class="text-rose-500 font-bold">刪除</button> </div> </div> <h3 class="font-bold text-sm">${item.title}</h3> ${item.desc ?`<p class="text-xs opacity-75">${item.desc}</p>`: ''} </div> </div>`;
 }).join('');
 }
 window.openAddModal = function() { document.getElementById('modal-backdrop').classList.remove('hidden'); }
@@ -364,13 +364,13 @@ renderItinerary();
 }
 }
 window.renderHotels = function() {
-document.getElementById('hotels-container').innerHTML = hotelsList.map(h => ⁠<div class="jp-card p-3.5 space-y-1.5 text-xs"> <h4 class="font-bold text-sm">${h.name}</h4> <div class="opacity-80">地址: ${h.desc}</div> <div class="font-bold">日期: ${h.dates}</div> </div>⁠).join('');
+document.getElementById('hotels-container').innerHTML = hotelsList.map(h => `<div class="jp-card p-3.5 space-y-1.5 text-xs"> <h4 class="font-bold text-sm">${h.name}</h4> <div class="opacity-80">地址: ${h.desc}</div> <div class="font-bold">日期: ${h.dates}</div> </div>`).join('');
 }
 window.renderExpenses = function() {
 let total = 0;
 window.expenses.forEach(e => total += Number(e.amount) || 0);
-document.getElementById('expense-total-jpy').innerText = ⁠¥${total.toLocaleString()} JPY⁠;
-document.getElementById('expense-list').innerHTML = window.expenses.length === 0 ? ⁠<div class="jp-card p-4 text-center text-xs opacity-60">尚無記帳紀錄</div>⁠ : window.expenses.map(e => ⁠<div class="jp-card p-3 flex justify-between items-center text-xs"> <div class="font-bold text-sm">${e.title}</div> <span class="font-black text-orange-600">¥${Number(e.amount).toLocaleString()}</span> </div>⁠).join('');
+document.getElementById('expense-total-jpy').innerText = `¥${total.toLocaleString()} JPY`;
+document.getElementById('expense-list').innerHTML = window.expenses.length === 0 ? `<div class="jp-card p-4 text-center text-xs opacity-60">尚無記帳紀錄</div>` : window.expenses.map(e => `<div class="jp-card p-3 flex justify-between items-center text-xs"> <div class="font-bold text-sm">${e.title}</div> <span class="font-black text-orange-600">¥${Number(e.amount).toLocaleString()}</span> </div>`).join('');
 }
 window.openExpenseModal = function() { document.getElementById('modal-expense-backdrop').classList.remove('hidden'); }
 window.closeExpenseModal = function() { document.getElementById('modal-expense-backdrop').classList.add('hidden'); }
@@ -390,7 +390,7 @@ renderExpenses();
 window.closeExpenseModal();
 }
 window.renderTodos = function() {
-document.getElementById('todo-items').innerHTML = window.todos.map(t => ⁠<div class="jp-card p-3 flex justify-between items-center text-xs"> <span class="font-bold ${t.completed ? 'line-through opacity-40' : ''}">${t.text}</span> </div>⁠).join('');
+document.getElementById('todo-items').innerHTML = window.todos.map(t => `<div class="jp-card p-3 flex justify-between items-center text-xs"> <span class="font-bold ${t.completed ? 'line-through opacity-40' : ''}">${t.text}</span> </div>`).join('');
 }
 window.openTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.remove('hidden'); }
 window.closeTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
