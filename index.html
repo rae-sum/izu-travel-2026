@@ -41,7 +41,7 @@
         </svg>
 
         <div class="relative z-10 space-y-2">
-            <!-- 乾淨日期標記：日期前方加入精美 SVG 紅葉向量插圖 -->
+            <!-- 日期 + 右上角同步狀態 -->
             <div class="flex justify-between items-center">
                 <div class="text-xs font-black text-orange-600 tracking-wide flex items-center gap-1.5">
                     <!-- SVG 紅葉向量圖案 -->
@@ -50,6 +50,11 @@
                         <path d="M12 15.5V22" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span>2026年 12/3 - 12/8 6天5夜</span>
+                </div>
+                <!-- 右上角同步狀態 -->
+                <div id="sync-status" class="flex items-center gap-1.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                    <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span id="sync-text">Firebase 雲端同步中</span>
                 </div>
             </div>
             
@@ -166,19 +171,40 @@
 
     <!-- PANEL 3: 記帳 -->
     <section id="panel-expense" class="space-y-3 hidden">
-        <div class="jp-card p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white space-y-1.5">
+        <div class="jp-card p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white space-y-2">
             <div class="text-xs text-slate-300 font-medium flex justify-between items-center">
-                <span>旅行總支出</span>
+                <span>旅行總支出（換算為日圓）</span>
                 <span class="w-2 h-2 rounded-full bg-orange-500"></span>
             </div>
-            <div class="flex justify-between items-baseline">
-                <span id="expense-total-jpy" class="text-2xl font-black text-orange-400">¥0</span>
-                <span id="expense-total-twd" class="text-xs font-semibold text-slate-300">約 NT$ 0</span>
+            <div id="expense-total-jpy" class="text-2xl font-black text-orange-400">¥0</div>
+            <div class="flex gap-3 text-xs font-semibold text-slate-300 pt-1 border-t border-slate-700">
+                <span id="expense-total-twd">約 NT$ 0</span>
+                <span id="expense-total-hkd">約 HK$ 0</span>
             </div>
         </div>
 
         <button onclick="openExpenseModal()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition">新增記帳</button>
         <div id="expense-list" class="space-y-2"></div>
+
+        <!-- 匯率換算工具 -->
+        <div class="jp-card p-3.5 space-y-3">
+            <h3 class="text-xs font-extrabold text-blue-950 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span> 匯率換算
+            </h3>
+            <div class="grid grid-cols-3 gap-2 text-[11px] text-center text-slate-500">
+                <div>日圓 (JPY)</div>
+                <div>台幣 (TWD)</div>
+                <div>港幣 (HKD)</div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <input type="number" id="fx-jpy" placeholder="JPY" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('jpy')">
+                <input type="number" id="fx-twd" placeholder="TWD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('twd')">
+                <input type="number" id="fx-hkd" placeholder="HKD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('hkd')">
+            </div>
+            <div class="text-[10px] text-slate-400 text-center">
+                參考匯率：1 JPY ≈ 0.21 TWD ≈ 0.052 HKD
+            </div>
+        </div>
     </section>
 
     <!-- PANEL 4: 待辦與預返清單 -->
@@ -261,19 +287,27 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">金額 (JPY) *</label>
+                        <label class="block font-bold text-slate-700 mb-1">金額 *</label>
                         <input type="number" id="expense-amount" required placeholder="金額" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">分類</label>
-                        <select id="expense-category" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
-                            <option value="餐飲">餐飲</option>
-                            <option value="交通">交通</option>
-                            <option value="購物">購物</option>
-                            <option value="住宿">住宿</option>
-                            <option value="門票">門票</option>
+                        <label class="block font-bold text-slate-700 mb-1">幣別</label>
+                        <select id="expense-currency" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
+                            <option value="JPY">日圓 (JPY)</option>
+                            <option value="TWD">台幣 (TWD)</option>
+                            <option value="HKD">港幣 (HKD)</option>
                         </select>
                     </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">分類</label>
+                    <select id="expense-category" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
+                        <option value="餐飲">餐飲</option>
+                        <option value="交通">交通</option>
+                        <option value="購物">購物</option>
+                        <option value="住宿">住宿</option>
+                        <option value="門票">門票</option>
+                    </select>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button type="button" onclick="closeExpenseModal()" class="flex-1 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl">取消</button>
@@ -351,9 +385,12 @@
             { id: '7', text: '預返行李箱空間分配與秤重', completed: false }
         ];
 
-        let itineraries = [...defaultItineraries];
+        // 一開始先空的，避免重新整理時先閃出舊預設資料
+        let itineraries = [];
         let expenses = [];
-        let todos = [...defaultTodos];
+        let todos = [];
+        let itinerariesLoaded = false;
+        let todosLoaded = false;
 
         const hotelsList = [
             { name: 'JR東日本橫濱METS飯店', kana: 'JR東日本ホテルメッツ 横浜', desc: '神奈川縣橫濱市神奈川區鶴屋町1-66-9', dates: '12月3日 - 12月4日 (1晚)' },
@@ -380,27 +417,38 @@
                     console.log("已寫入預設待辦到雲端");
                 }
             } catch (err) {
-                console.log("寫入預設資料失敗，使用本地資料", err);
+                console.log("寫入預設資料失敗", err);
             }
         }
         seedDefaultsIfEmpty();
 
         // 即時同步
         onSnapshot(collection(db, "itineraries"), (snapshot) => {
-            if (!snapshot.empty) {
-                const cloudItems = [];
-                snapshot.forEach(docSnap => {
-                    cloudItems.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                cloudItems.sort((a, b) => {
-                    if (Number(a.day) !== Number(b.day)) return Number(a.day) - Number(b.day);
-                    return (a.time || '').localeCompare(b.time || '');
-                });
-                itineraries = cloudItems;
-            }
+            const cloudItems = [];
+            snapshot.forEach(docSnap => {
+                cloudItems.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            cloudItems.sort((a, b) => {
+                if (Number(a.day) !== Number(b.day)) return Number(a.day) - Number(b.day);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+            itineraries = cloudItems;
+            itinerariesLoaded = true;
+
+            // 更新同步狀態顯示
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (dot) { dot.className = 'w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse'; }
+            if (text) { text.innerText = 'Firebase 雲端同步中'; }
             renderItinerary();
         }, (error) => {
-            console.log("行程同步失敗，使用本地資料");
+            console.log("行程同步失敗，使用本地預設資料");
+            itineraries = [...defaultItineraries];
+            itinerariesLoaded = true;
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (dot) { dot.className = 'w-2 h-2 rounded-full bg-rose-400'; }
+            if (text) { text.innerText = '離線模式'; }
             renderItinerary();
         });
 
@@ -413,12 +461,15 @@
         });
 
         onSnapshot(collection(db, "todos"), (snapshot) => {
-            if (!snapshot.empty) {
-                todos = [];
-                snapshot.forEach(docSnap => {
-                    todos.push({ id: docSnap.id, ...docSnap.data() });
-                });
-            }
+            todos = [];
+            snapshot.forEach(docSnap => {
+                todos.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            todosLoaded = true;
+            renderTodos();
+        }, (error) => {
+            todos = [...defaultTodos];
+            todosLoaded = true;
             renderTodos();
         });
 
@@ -460,6 +511,10 @@
 
         function renderItinerary() {
             const container = document.getElementById('itinerary-timeline');
+            if (!itinerariesLoaded) {
+                container.innerHTML = `<div class="jp-card p-5 text-center text-xs text-slate-500 font-medium ml-1">正在從雲端載入行程...</div>`;
+                return;
+            }
             const filtered = itineraries.filter(i => Number(i.day) === currentDay);
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="jp-card p-5 text-center text-xs text-slate-500 font-medium ml-1">本日尚無行程</div>`;
@@ -579,25 +634,69 @@
             }).join('');
         }
 
+        // 參考匯率（以日圓為基準）
+        const FX = {
+            JPY: 1,
+            TWD: 0.21,   // 1 JPY ≈ 0.21 TWD
+            HKD: 0.052   // 1 JPY ≈ 0.052 HKD
+        };
+
+        // 把任意幣別金額換算成日圓
+        function toJPY(amount, currency) {
+            const cur = (currency || 'JPY').toUpperCase();
+            if (cur === 'JPY') return Number(amount) || 0;
+            if (cur === 'TWD') return (Number(amount) || 0) / FX.TWD;
+            if (cur === 'HKD') return (Number(amount) || 0) / FX.HKD;
+            return Number(amount) || 0;
+        }
+
         function renderExpenses() {
             const list = document.getElementById('expense-list');
-            let total = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+            // 全部換算成日圓後加總
+            let totalJPY = expenses.reduce((sum, e) => sum + toJPY(e.amount, e.currency), 0);
+
             list.innerHTML = expenses.length === 0
                 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>`
-                : expenses.map(e => `
+                : expenses.map(e => {
+                    const cur = (e.currency || 'JPY').toUpperCase();
+                    const symbol = cur === 'TWD' ? 'NT$' : cur === 'HKD' ? 'HK$' : '¥';
+                    return `
                     <div class="jp-card p-3 flex justify-between items-center text-xs">
                         <div>
                             <div class="font-bold text-slate-900 text-sm">${e.title}</div>
-                            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
+                            <div class="flex gap-1.5 mt-0.5">
+                                <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
+                                <span class="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">${cur}</span>
+                            </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="font-black text-orange-600 text-sm">¥${Number(e.amount).toLocaleString()}</span>
+                            <span class="font-black text-orange-600 text-sm">${symbol}${Number(e.amount).toLocaleString()}</span>
                             <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
                         </div>
-                    </div>
-                `).join('');
-            document.getElementById('expense-total-jpy').innerText = `¥${total.toLocaleString()}`;
-            document.getElementById('expense-total-twd').innerText = `約 NT$ ${Math.round(total * 0.21).toLocaleString()}`;
+                    </div>`;
+                }).join('');
+
+            document.getElementById('expense-total-jpy').innerText = `¥${Math.round(totalJPY).toLocaleString()}`;
+            document.getElementById('expense-total-twd').innerText = `約 NT$ ${Math.round(totalJPY * FX.TWD).toLocaleString()}`;
+            document.getElementById('expense-total-hkd').innerText = `約 HK$ ${Math.round(totalJPY * FX.HKD).toLocaleString()}`;
+        }
+
+        // 匯率換算工具
+        window.convertFx = function(from) {
+            const jpyEl = document.getElementById('fx-jpy');
+            const twdEl = document.getElementById('fx-twd');
+            const hkdEl = document.getElementById('fx-hkd');
+            let jpy = 0;
+            if (from === 'jpy') {
+                jpy = Number(jpyEl.value) || 0;
+            } else if (from === 'twd') {
+                jpy = (Number(twdEl.value) || 0) / FX.TWD;
+            } else if (from === 'hkd') {
+                jpy = (Number(hkdEl.value) || 0) / FX.HKD;
+            }
+            if (from !== 'jpy') jpyEl.value = jpy ? Math.round(jpy) : '';
+            if (from !== 'twd') twdEl.value = jpy ? Math.round(jpy * FX.TWD) : '';
+            if (from !== 'hkd') hkdEl.value = jpy ? Math.round(jpy * FX.HKD) : '';
         }
 
         window.openExpenseModal = function() {
@@ -612,6 +711,7 @@
             const data = {
                 title: document.getElementById('expense-title').value.trim(),
                 amount: Number(document.getElementById('expense-amount').value),
+                currency: document.getElementById('expense-currency').value,
                 category: document.getElementById('expense-category').value
             };
             try {
@@ -623,6 +723,7 @@
             closeExpenseModal();
             document.getElementById('expense-title').value = '';
             document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-currency').value = 'JPY';
         }
         window.deleteExpense = async function(id) {
             try {
@@ -635,6 +736,10 @@
 
         function renderTodos() {
             const container = document.getElementById('todo-items');
+            if (!todosLoaded) {
+                container.innerHTML = `<div class="jp-card p-4 text-center text-xs text-slate-500">正在從雲端載入清單...</div>`;
+                return;
+            }
             container.innerHTML = todos.length === 0
                 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無準備項目</div>`
                 : todos.map(t => `
