@@ -303,7 +303,22 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaRUEd3JXtyCu46s-IGfV4EgDw0H3hRZ0",
+            authDomain: "izu-travel-bdd98.firebaseapp.com",
+            projectId: "izu-travel-bdd98",
+            storageBucket: "izu-travel-bdd98.firebasestorage.app",
+            messagingSenderId: "34952484447",
+            appId: "1:34952484447:web:540386651b199df3cb2dea",
+            measurementId: "G-6V4T2N7WRY"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const weatherData = {
             yokohama: { temp: '14°C', icon: '晴朗', fuji: '極佳 🗻' },
             izukogen: { temp: '15°C', icon: '晴朗', fuji: '良好 🏔️' },
@@ -314,21 +329,31 @@
         const dayDates = { 1: '12/03 三', 2: '12/04 四', 3: '12/05 五', 4: '12/06 六', 5: '12/07 日', 6: '12/08 一' };
         let currentDay = 1;
 
-        let itineraries = [
-            { id: 1, day: 1, time: '09:15-13:25', title: '台中飛往成田機場 (JX314)', tag: '航班', desc: '下機在機場找黑貓寄行李到湯澤', map: '成田機場' },
-            { id: 2, day: 1, time: '14:30', title: "搭乘 N'EX 前往橫濱", tag: '交通', desc: '直達橫濱車站', map: '橫濱車站' },
-            { id: 3, day: 1, time: '16:00', title: 'Check in JR東日本橫濱METS飯店', tag: '住宿', desc: '辦理入住', map: 'JR東日本橫濱METS飯店' },
-            { id: 4, day: 1, time: '18:30', title: '享用晚餐', tag: '美食', desc: '橫濱在地美食', map: '橫濱' },
-            { id: 5, day: 2, time: '01:25-06:30', title: '香港飛往東京成田 (CX524)', tag: '航班', desc: 'CX524 航班抵達', map: '成田機場' },
-            { id: 6, day: 2, time: '08:30', title: "N'EX 前往橫濱會合", tag: '交通', desc: '前往橫濱與夥伴會合', map: '橫濱車站' },
-            { id: 7, day: 2, time: '10:00', title: '取租車並開往伊豆', tag: '交通', desc: '自駕前往伊豆半島', map: '伊豆' },
-            { id: 8, day: 2, time: '15:00', title: '入住 稻取銀水莊', tag: '住宿', desc: '享受海景溫泉度假村', map: '稲取銀水荘' }
+        // 預設資料（只在雲端是空的時候寫入一次）
+        const defaultItineraries = [
+            { id: '1', day: 1, time: '09:15-13:25', title: '台中飛往成田機場 (JX314)', tag: '航班', desc: '下機在機場找黑貓寄行李到湯澤', map: '成田機場' },
+            { id: '2', day: 1, time: '14:30', title: "搭乘 N'EX 前往橫濱", tag: '交通', desc: '直達橫濱車站', map: '橫濱車站' },
+            { id: '3', day: 1, time: '16:00', title: 'Check in JR東日本橫濱METS飯店', tag: '住宿', desc: '辦理入住', map: 'JR東日本橫濱METS飯店' },
+            { id: '4', day: 1, time: '18:30', title: '享用晚餐', tag: '美食', desc: '橫濱在地美食', map: '橫濱' },
+            { id: '5', day: 2, time: '01:25-06:30', title: '香港飛往東京成田 (CX524)', tag: '航班', desc: 'CX524 航班抵達', map: '成田機場' },
+            { id: '6', day: 2, time: '08:30', title: "N'EX 前往橫濱會合", tag: '交通', desc: '前往橫濱與夥伴會合', map: '橫濱車站' },
+            { id: '7', day: 2, time: '10:00', title: '取租車並開往伊豆', tag: '交通', desc: '自駕前往伊豆半島', map: '伊豆' },
+            { id: '8', day: 2, time: '15:00', title: '入住 稻取銀水莊', tag: '住宿', desc: '享受海景溫泉度假村', map: '稲取銀水荘' }
         ];
 
-        try {
-            const saved = localStorage.getItem('izu_2026_itineraries');
-            if (saved) itineraries = JSON.parse(saved);
-        } catch(e) {}
+        const defaultTodos = [
+            { id: '1', text: '護照正本與有效期限確認', completed: true },
+            { id: '2', text: '日本網卡 / eSIM 購買', completed: false },
+            { id: '3', text: '黑貓宅急便行李寄送單準備', completed: false },
+            { id: '4', text: '駕照日文譯本與台灣駕照正本', completed: false },
+            { id: '5', text: '飯店預約確認單列印', completed: false },
+            { id: '6', text: '預返伴手禮與免稅品清單確認', completed: false },
+            { id: '7', text: '預返行李箱空間分配與秤重', completed: false }
+        ];
+
+        let itineraries = [...defaultItineraries];
+        let expenses = [];
+        let todos = [...defaultTodos];
 
         const hotelsList = [
             { name: 'JR東日本橫濱METS飯店', kana: 'JR東日本ホテルメッツ 横浜', desc: '神奈川縣橫濱市神奈川區鶴屋町1-66-9', dates: '12月3日 - 12月4日 (1晚)' },
@@ -337,35 +362,67 @@
             { name: 'Ole Inn 酒店', kana: 'ホテルオーレ イン', desc: '靜岡縣靜岡市葵區', dates: '12月6日 - 12月8日 (2晚)' }
         ];
 
-        let expenses = [];
-        try {
-            const savedExp = localStorage.getItem('izu_2026_expenses');
-            if (savedExp) expenses = JSON.parse(savedExp);
-        } catch(e) {}
-
-        let todos = [
-            { id: 1, text: '護照正本與有效期限確認', completed: true },
-            { id: 2, text: '日本網卡 / eSIM 購買', completed: false },
-            { id: 3, text: '黑貓宅急便行李寄送單準備', completed: false },
-            { id: 4, text: '駕照日文譯本與台灣駕照正本', completed: false },
-            { id: 5, text: '飯店預約確認單列印', completed: false },
-            { id: 6, text: '預返伴手禮與免稅品清單確認', completed: false },
-            { id: 7, text: '預返行李箱空間分配與秤重', completed: false }
-        ];
-        try {
-            const savedTodo = localStorage.getItem('izu_2026_todos');
-            if (savedTodo) todos = JSON.parse(savedTodo);
-        } catch(e) {}
-
-        function saveStorage() {
+        // 雲端空的時候自動寫入預設資料
+        async function seedDefaultsIfEmpty() {
             try {
-                localStorage.setItem('izu_2026_itineraries', JSON.stringify(itineraries));
-                localStorage.setItem('izu_2026_expenses', JSON.stringify(expenses));
-                localStorage.setItem('izu_2026_todos', JSON.stringify(todos));
-            } catch(e) {}
+                const itinSnap = await getDocs(collection(db, "itineraries"));
+                if (itinSnap.empty) {
+                    for (const item of defaultItineraries) {
+                        await setDoc(doc(db, "itineraries", String(item.id)), item);
+                    }
+                    console.log("已寫入預設行程到雲端");
+                }
+                const todoSnap = await getDocs(collection(db, "todos"));
+                if (todoSnap.empty) {
+                    for (const item of defaultTodos) {
+                        await setDoc(doc(db, "todos", String(item.id)), item);
+                    }
+                    console.log("已寫入預設待辦到雲端");
+                }
+            } catch (err) {
+                console.log("寫入預設資料失敗，使用本地資料", err);
+            }
         }
+        seedDefaultsIfEmpty();
 
-        function updateWeather() {
+        // 即時同步
+        onSnapshot(collection(db, "itineraries"), (snapshot) => {
+            if (!snapshot.empty) {
+                const cloudItems = [];
+                snapshot.forEach(docSnap => {
+                    cloudItems.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                cloudItems.sort((a, b) => {
+                    if (Number(a.day) !== Number(b.day)) return Number(a.day) - Number(b.day);
+                    return (a.time || '').localeCompare(b.time || '');
+                });
+                itineraries = cloudItems;
+            }
+            renderItinerary();
+        }, (error) => {
+            console.log("行程同步失敗，使用本地資料");
+            renderItinerary();
+        });
+
+        onSnapshot(collection(db, "expenses"), (snapshot) => {
+            expenses = [];
+            snapshot.forEach(docSnap => {
+                expenses.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            renderExpenses();
+        });
+
+        onSnapshot(collection(db, "todos"), (snapshot) => {
+            if (!snapshot.empty) {
+                todos = [];
+                snapshot.forEach(docSnap => {
+                    todos.push({ id: docSnap.id, ...docSnap.data() });
+                });
+            }
+            renderTodos();
+        });
+
+        window.updateWeather = function() {
             const loc = document.getElementById('weather-location').value;
             const data = weatherData[loc];
             document.getElementById('weather-temp').innerText = data.temp;
@@ -373,17 +430,16 @@
             document.getElementById('fuji-visibility').innerText = data.fuji;
         }
 
-        function switchMainTab(tab) {
+        window.switchMainTab = function(tab) {
             ['itinerary', 'hotel', 'expense', 'todolist'].forEach(t => {
                 document.getElementById(`panel-${t}`).classList.add('hidden');
                 document.getElementById(`tab-btn-${t}`).className = "py-2 rounded-lg transition text-slate-700 font-bold hover:text-slate-900";
             });
             document.getElementById(`panel-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tab}`).className = "py-2 rounded-lg transition text-blue-950 bg-white border border-slate-200 shadow-sm font-bold";
-
-            if(tab === 'hotel') renderHotels();
-            if(tab === 'expense') renderExpenses();
-            if(tab === 'todolist') renderTodos();
+            if (tab === 'hotel') renderHotels();
+            if (tab === 'expense') renderExpenses();
+            if (tab === 'todolist') renderTodos();
         }
 
         function renderDayTabs() {
@@ -391,14 +447,16 @@
             let html = '';
             for (let i = 1; i <= 6; i++) {
                 const active = i === currentDay ? 'text-blue-950 border-b-2 border-orange-500 font-black' : 'text-slate-500 hover:text-slate-800';
-                html += `<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">
-                    Day ${i} (${dayDates[i]})
-                </button>`;
+                html += `<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">Day ${i} (${dayDates[i]})</button>`;
             }
             container.innerHTML = html;
         }
 
-        function selectDay(day) { currentDay = day; renderDayTabs(); renderItinerary(); }
+        window.selectDay = function(day) {
+            currentDay = day;
+            renderDayTabs();
+            renderItinerary();
+        }
 
         function renderItinerary() {
             const container = document.getElementById('itinerary-timeline');
@@ -412,9 +470,7 @@
                                  item.tag === '交通' ? 'bg-amber-50 text-amber-800 border-amber-200' :
                                  item.tag === '美食' ? 'bg-rose-50 text-rose-800 border-rose-200' :
                                  item.tag === '住宿' ? 'bg-purple-50 text-purple-800 border-purple-200' : 'bg-blue-50 text-blue-900 border-blue-200';
-
                 const mapBtn = item.map ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100">地圖</a>` : '';
-
                 return `
                     <div class="relative pl-3">
                         <div class="absolute -left-[16px] top-3.5 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white ring-2 ring-orange-200"></div>
@@ -426,8 +482,8 @@
                                 </div>
                                 <div class="flex items-center gap-2 text-xs">
                                     ${mapBtn}
-                                    <button onclick="openEditModal(${item.id})" class="text-slate-600 hover:text-blue-900 font-bold">修改</button>
-                                    <button onclick="deleteItinerary(${item.id})" class="text-slate-400 hover:text-rose-600 font-bold">刪除</button>
+                                    <button onclick="openEditModal('${item.id}')" class="text-slate-600 hover:text-blue-900 font-bold">修改</button>
+                                    <button onclick="deleteItinerary('${item.id}')" class="text-slate-400 hover:text-rose-600 font-bold">刪除</button>
                                 </div>
                             </div>
                             <h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>
@@ -438,7 +494,7 @@
             }).join('');
         }
 
-        function openAddModal() {
+        window.openAddModal = function() {
             document.getElementById('modal-title').innerText = '新增行程';
             document.getElementById('itinerary-form').reset();
             document.getElementById('form-item-id').value = '';
@@ -446,8 +502,8 @@
             document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
-        function openEditModal(id) {
-            const item = itineraries.find(i => i.id === id);
+        window.openEditModal = function(id) {
+            const item = itineraries.find(i => String(i.id) === String(id));
             if (!item) return;
             document.getElementById('modal-title').innerText = '編輯行程';
             document.getElementById('form-item-id').value = item.id;
@@ -460,13 +516,15 @@
             document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('modal-backdrop').classList.add('hidden'); }
+        window.closeModal = function() {
+            document.getElementById('modal-backdrop').classList.add('hidden');
+        }
 
-        function saveItinerary(e) {
+        window.saveItinerary = async function(e) {
             e.preventDefault();
-            const id = document.getElementById('form-item-id').value;
+            const existingId = document.getElementById('form-item-id').value;
+            const id = existingId || ('it_' + Date.now());
             const data = {
-                id: id ? Number(id) : Date.now(),
                 day: Number(document.getElementById('form-day').value),
                 time: document.getElementById('form-time').value.trim(),
                 tag: document.getElementById('form-tag').value,
@@ -474,21 +532,29 @@
                 desc: document.getElementById('form-desc').value.trim(),
                 map: document.getElementById('form-map').value.trim()
             };
-            if(id) {
-                const idx = itineraries.findIndex(i => i.id === Number(id));
-                if(idx !== -1) itineraries[idx] = data;
-            } else {
-                itineraries.push(data);
+            try {
+                await setDoc(doc(db, "itineraries", String(id)), data);
+            } catch (err) {
+                console.error(err);
+                if (existingId) {
+                    const idx = itineraries.findIndex(i => String(i.id) === String(existingId));
+                    if (idx !== -1) itineraries[idx] = { id, ...data };
+                } else {
+                    itineraries.push({ id, ...data });
+                }
+                renderItinerary();
             }
-            saveStorage();
             closeModal();
             selectDay(data.day);
         }
 
-        function deleteItinerary(id) {
-            itineraries = itineraries.filter(i => i.id !== id);
-            saveStorage();
-            renderItinerary();
+        window.deleteItinerary = async function(id) {
+            try {
+                await deleteDoc(doc(db, "itineraries", String(id)));
+            } catch (err) {
+                itineraries = itineraries.filter(i => String(i.id) !== String(id));
+                renderItinerary();
+            }
         }
 
         function renderHotels() {
@@ -515,71 +581,115 @@
 
         function renderExpenses() {
             const list = document.getElementById('expense-list');
-            let total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-            list.innerHTML = expenses.length === 0 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>` : expenses.map(e => `
-                <div class="jp-card p-3 flex justify-between items-center text-xs">
-                    <div>
-                        <div class="font-bold text-slate-900 text-sm">${e.title}</div>
-                        <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category}</span>
+            let total = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+            list.innerHTML = expenses.length === 0
+                ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>`
+                : expenses.map(e => `
+                    <div class="jp-card p-3 flex justify-between items-center text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900 text-sm">${e.title}</div>
+                            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-orange-600 text-sm">¥${Number(e.amount).toLocaleString()}</span>
+                            <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-black text-orange-600 text-sm">¥${Number(e.amount).toLocaleString()}</span>
-                        <button onclick="deleteExpense(${e.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
             document.getElementById('expense-total-jpy').innerText = `¥${total.toLocaleString()}`;
             document.getElementById('expense-total-twd').innerText = `約 NT$ ${Math.round(total * 0.21).toLocaleString()}`;
         }
 
-        function openExpenseModal() { document.getElementById('modal-expense-backdrop').classList.remove('hidden'); }
-        function closeExpenseModal() { document.getElementById('modal-expense-backdrop').classList.add('hidden'); }
-        function saveExpense(e) {
+        window.openExpenseModal = function() {
+            document.getElementById('modal-expense-backdrop').classList.remove('hidden');
+        }
+        window.closeExpenseModal = function() {
+            document.getElementById('modal-expense-backdrop').classList.add('hidden');
+        }
+        window.saveExpense = async function(e) {
             e.preventDefault();
-            expenses.push({
-                id: Date.now(),
+            const id = 'exp_' + Date.now();
+            const data = {
                 title: document.getElementById('expense-title').value.trim(),
                 amount: Number(document.getElementById('expense-amount').value),
                 category: document.getElementById('expense-category').value
-            });
-            saveStorage();
+            };
+            try {
+                await setDoc(doc(db, "expenses", id), data);
+            } catch (err) {
+                expenses.push({ id, ...data });
+                renderExpenses();
+            }
             closeExpenseModal();
-            renderExpenses();
             document.getElementById('expense-title').value = '';
             document.getElementById('expense-amount').value = '';
         }
-        function deleteExpense(id) { expenses = expenses.filter(e => e.id !== id); saveStorage(); renderExpenses(); }
+        window.deleteExpense = async function(id) {
+            try {
+                await deleteDoc(doc(db, "expenses", String(id)));
+            } catch (err) {
+                expenses = expenses.filter(e => String(e.id) !== String(id));
+                renderExpenses();
+            }
+        }
 
         function renderTodos() {
             const container = document.getElementById('todo-items');
-            container.innerHTML = todos.length === 0 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無準備項目</div>` : todos.map(t => `
-                <div class="jp-card p-3 flex justify-between items-center text-xs">
-                    <label class="flex items-center gap-2 cursor-pointer flex-1">
-                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 rounded text-orange-600">
-                        <span class="font-bold text-xs ${t.completed ? 'line-through text-slate-400' : 'text-slate-900'}">${t.text}</span>
-                    </label>
-                    <button onclick="deleteTodo(${t.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                </div>
-            `).join('');
+            container.innerHTML = todos.length === 0
+                ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無準備項目</div>`
+                : todos.map(t => `
+                    <div class="jp-card p-3 flex justify-between items-center text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer flex-1">
+                            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo('${t.id}')" class="w-4 h-4 rounded text-orange-600">
+                            <span class="font-bold text-xs ${t.completed ? 'line-through text-slate-400' : 'text-slate-900'}">${t.text}</span>
+                        </label>
+                        <button onclick="deleteTodo('${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                    </div>
+                `).join('');
         }
 
-        function openTodoModal() { document.getElementById('modal-todo-backdrop').classList.remove('hidden'); }
-        function closeTodoModal() { document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
-        function saveTodo(e) {
+        window.openTodoModal = function() {
+            document.getElementById('modal-todo-backdrop').classList.remove('hidden');
+        }
+        window.closeTodoModal = function() {
+            document.getElementById('modal-todo-backdrop').classList.add('hidden');
+        }
+        window.saveTodo = async function(e) {
             e.preventDefault();
-            todos.push({ id: Date.now(), text: document.getElementById('todo-text').value.trim(), completed: false });
-            saveStorage();
+            const id = 'todo_' + Date.now();
+            const data = { text: document.getElementById('todo-text').value.trim(), completed: false };
+            try {
+                await setDoc(doc(db, "todos", id), data);
+            } catch (err) {
+                todos.push({ id, ...data });
+                renderTodos();
+            }
             closeTodoModal();
-            renderTodos();
             document.getElementById('todo-text').value = '';
         }
-        function toggleTodo(id) { const t = todos.find(item => item.id === id); if(t) { t.completed = !t.completed; saveStorage(); renderTodos(); } }
-        function deleteTodo(id) { todos = todos.filter(t => t.id !== id); saveStorage(); renderTodos(); }
+        window.toggleTodo = async function(id) {
+            const t = todos.find(item => String(item.id) === String(id));
+            if (!t) return;
+            const newCompleted = !t.completed;
+            try {
+                await setDoc(doc(db, "todos", String(id)), { text: t.text, completed: newCompleted }, { merge: true });
+            } catch (err) {
+                t.completed = newCompleted;
+                renderTodos();
+            }
+        }
+        window.deleteTodo = async function(id) {
+            try {
+                await deleteDoc(doc(db, "todos", String(id)));
+            } catch (err) {
+                todos = todos.filter(t => String(t.id) !== String(id));
+                renderTodos();
+            }
+        }
 
-        window.onload = function() {
-            renderDayTabs();
-            renderItinerary();
-        };
+        // 初始化
+        renderDayTabs();
+        renderItinerary();
     </script>
 </body>
 </html>
