@@ -49,7 +49,7 @@
                 <!-- 右上角同步狀態 -->
                 <div id="sync-status" class="flex items-center gap-1.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
                     <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                    <span id="sync-text">Firebase 雲端同步中</span>
+                    <span id="sync-text">同步中</span>
                 </div>
             </div>
             
@@ -431,7 +431,7 @@
 
         async function initCloudSync() {
             if (!db) {
-                updateSyncUI(false, "離線模式");
+                updateSyncUI(false, "OFFLINE");
                 renderItinerary();
                 return;
             }
@@ -459,11 +459,11 @@
                         });
                         itineraries = cloudItems;
                     }
-                    updateSyncUI(true, "雲端已同步");
+                    updateSyncUI(true, "SYNCED");
                     renderItinerary();
                 }, (error) => {
                     console.warn("itineraries 讀取失敗", error);
-                    updateSyncUI(false, "離線模式");
+                    updateSyncUI(false, "OFFLINE");
                     renderItinerary();
                 });
 
@@ -488,7 +488,7 @@
 
             } catch (e) {
                 console.warn("雲端同步開啟失敗", e);
-                updateSyncUI(false, "離線模式");
+                updateSyncUI(false, "OFFLINE");
                 renderItinerary();
             }
         }
@@ -500,7 +500,7 @@
                 dot.className = online ? 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse' : 'w-1.5 h-1.5 rounded-full bg-amber-500';
             }
             if (syncText) {
-                syncText.innerText = text;
+                syncText.innerText = online ? '已同步' : '離線模式';
             }
         }
 
@@ -688,19 +688,52 @@
                 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>`
                 : expenses.map(e => {
                     const cur = (e.currency || 'JPY').toUpperCase();
+                    const amt = Number(e.amount) || 0;
+
+                    // 計算三種貨幣的金額
+                    let jpyAmt = amt, twdAmt = amt, hkdAmt = amt;
+                    if (cur === 'JPY') {
+                        jpyAmt = amt;
+                        twdAmt = amt * FX.TWD;
+                        hkdAmt = amt * FX.HKD;
+                    } else if (cur === 'TWD') {
+                        jpyAmt = amt / FX.TWD;
+                        twdAmt = amt;
+                        hkdAmt = (amt / FX.TWD) * FX.HKD;
+                    } else if (cur === 'HKD') {
+                        jpyAmt = amt / FX.HKD;
+                        twdAmt = (amt / FX.HKD) * FX.TWD;
+                        hkdAmt = amt;
+                    }
+
+                    // 依據原始輸入的幣別，只顯示其餘兩種換算結果
+                    let convertedStr = '';
+                    if (cur === 'JPY') {
+                        convertedStr = `NT$ ${Math.round(twdAmt).toLocaleString()} • HK$ ${Math.round(hkdAmt).toLocaleString()}`;
+                    } else if (cur === 'TWD') {
+                        convertedStr = `¥${Math.round(jpyAmt).toLocaleString()} • HK$ ${Math.round(hkdAmt).toLocaleString()}`;
+                    } else if (cur === 'HKD') {
+                        convertedStr = `¥${Math.round(jpyAmt).toLocaleString()} • NT$ ${Math.round(twdAmt).toLocaleString()}`;
+                    }
+
                     const symbol = cur === 'TWD' ? 'NT$' : cur === 'HKD' ? 'HK$' : '¥';
                     return `
-                    <div class="jp-card p-3 flex justify-between items-center text-xs">
-                        <div>
-                            <div class="font-bold text-slate-900 text-sm">${e.title}</div>
-                            <div class="flex gap-1.5 mt-0.5">
-                                <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
-                                <span class="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">${cur}</span>
+                    <div class="jp-card p-3 space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-slate-900 text-sm">${e.title}</div>
+                                <div class="flex gap-1.5 mt-0.5">
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
+                                    <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">${cur}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-orange-600 text-sm">${symbol}${amt.toLocaleString()}</span>
+                                <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-black text-orange-600 text-sm">${symbol}${Number(e.amount).toLocaleString()}</span>
-                            <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                        <div class="flex gap-2 text-[10px] text-slate-500 pt-1 border-t border-slate-100 justify-end font-medium">
+                            <span>${convertedStr}</span>
                         </div>
                     </div>`;
                 }).join('');
@@ -771,7 +804,7 @@
         }
 
         window.openTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.remove('hidden'); }
-        window.closeTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.hidden = true; document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
+        window.closeTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
         window.saveTodo = async function(e) {
             e.preventDefault();
             const id = 'todo_' + Date.now();
