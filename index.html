@@ -25,31 +25,31 @@
 </head>
 <body class="min-h-screen pb-20 text-slate-900 pt-3 max-w-md mx-auto px-4 space-y-3">
 
-    <!-- 1. 頂部標題與氣象（適中富士山插圖 + SVG 紅葉插圖） -->
+    <!-- 1. 頂部標題與氣象 -->
     <section class="jp-card p-4 relative overflow-hidden bg-gradient-to-br from-blue-50/50 via-white to-orange-50/40 border-slate-200 min-h-[110px] flex flex-col justify-between">
         
-        <!-- 背景適中富士山插圖 SVG (縮小尺寸並靠右下放置) -->
+        <!-- 背景富士山插圖 SVG -->
         <svg class="absolute right-0 bottom-0 pointer-events-none z-0 opacity-20" width="220" height="90" viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- 遠山背景 -->
             <path d="M 0 90 L 45 60 L 90 90 Z" fill="#94A3B8" />
-            <!-- 富士山山體 -->
             <path d="M 60 90 L 135 15 L 175 15 L 230 90 Z" fill="#1E3A8A" />
-            <!-- 富士山積雪冠頂 -->
             <path d="M 135 15 L 175 15 L 192 38 L 178 32 L 155 42 L 132 32 L 118 38 Z" fill="#FFFFFF" />
-            <!-- 柔和日出太陽 -->
             <circle cx="195" cy="22" r="14" fill="#EA580C" opacity="0.6" />
         </svg>
 
         <div class="relative z-10 space-y-2">
-            <!-- 乾淨日期標記：日期前方加入精美 SVG 紅葉向量插圖 -->
+            <!-- 日期 + 右上角同步狀態 -->
             <div class="flex justify-between items-center">
                 <div class="text-xs font-black text-orange-600 tracking-wide flex items-center gap-1.5">
-                    <!-- SVG 紅葉向量圖案 -->
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="#EA580C" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
                         <path d="M12 2C12.5 4.5 14 6 16.5 6.5C15 8 15 9.5 16 11C18 10 19.5 10.5 21 12C19 13.5 18 15 18.5 17.5C16.5 16.5 15 17 13.5 18.5C13 16.5 12 15.5 12 15.5C12 15.5 11 16.5 10.5 18.5C9 17 7.5 16.5 5.5 17.5C6 15 5 13.5 3 12C4.5 10.5 6 10 8 11C9 9.5 9 8 7.5 6.5C10 6 11.5 4.5 12 2Z" />
                         <path d="M12 15.5V22" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span>2026年 12/3 - 12/8 6天5夜</span>
+                </div>
+                <!-- 右上角同步狀態 -->
+                <div id="sync-status" class="flex items-center gap-1.5 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                    <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span id="sync-text">同步中</span>
                 </div>
             </div>
             
@@ -69,12 +69,12 @@
                 </div>
                 <div class="flex items-center gap-1.5">
                     <div class="flex items-center gap-1 font-bold text-slate-800 bg-white/90 px-2 py-0.5 rounded border border-slate-200">
-                        <span id="weather-icon" class="text-xs">晴朗</span>
-                        <span id="weather-temp" class="text-blue-900 font-extrabold">14°C</span>
+                        <span id="weather-icon" class="text-xs">更新中...</span>
+                        <span id="weather-temp" class="text-blue-900 font-extrabold">--°C</span>
                     </div>
                     <div class="flex items-center gap-1 font-bold text-slate-800 bg-orange-50/90 px-2 py-0.5 rounded border border-orange-200">
                         <span class="text-[10px] text-orange-700">富士山:</span>
-                        <span id="fuji-visibility" class="text-orange-800 font-extrabold">極佳 🗻</span>
+                        <span id="fuji-visibility" class="text-orange-800 font-extrabold">評估中 🗻</span>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
         <div id="itinerary-timeline" class="space-y-3 relative pl-3 border-l-2 border-orange-500 ml-2 my-2"></div>
     </section>
 
-    <!-- PANEL 2: 航班與住宿 (去程2班、回程1班、飯店精確排序) -->
+    <!-- PANEL 2: 航班與住宿 -->
     <section id="panel-hotel" class="space-y-4 hidden">
         <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
             <span class="text-xs font-bold text-slate-800 pl-1">航班與住宿資訊總覽</span>
@@ -115,10 +115,9 @@
                 <span class="w-2 h-2 rounded-full bg-orange-500"></span> 航班資訊
             </h3>
             
-            <!-- 去程 1：台中 ➔ 東京成田 (12/03) -->
             <div class="jp-card p-3.5 space-y-2 text-xs">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
-                    <span class="font-bold text-slate-800">去程 1 (12/03)</span>
+                    <span class="font-bold text-slate-800">去程 1 (12/03 三)</span>
                     <span class="text-[10px] bg-orange-100 text-orange-800 font-extrabold px-2 py-0.5 rounded">JX314</span>
                 </div>
                 <div class="flex justify-between items-center font-bold text-slate-900">
@@ -128,10 +127,9 @@
                 </div>
             </div>
 
-            <!-- 去程 2：香港 ➔ 東京成田 (12/04) -->
             <div class="jp-card p-3.5 space-y-2 text-xs">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
-                    <span class="font-bold text-slate-800">去程 2 (12/04)</span>
+                    <span class="font-bold text-slate-800">去程 2 (12/04 四)</span>
                     <span class="text-[10px] bg-orange-100 text-orange-800 font-extrabold px-2 py-0.5 rounded">CX524</span>
                 </div>
                 <div class="flex justify-between items-center font-bold text-slate-900">
@@ -141,10 +139,9 @@
                 </div>
             </div>
 
-            <!-- 回程：東京成田 ➔ 香港 (12/08) -->
             <div class="jp-card p-3.5 space-y-2 text-xs">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
-                    <span class="font-bold text-slate-800">回程 (12/08)</span>
+                    <span class="font-bold text-slate-800">回程 (12/08 一)</span>
                     <span class="text-[10px] bg-orange-100 text-orange-800 font-extrabold px-2 py-0.5 rounded">CX505</span>
                 </div>
                 <div class="flex justify-between items-center font-bold text-slate-900">
@@ -155,7 +152,7 @@
             </div>
         </div>
 
-        <!-- 飯店卡片列表 (橫濱飯店 ➔ 銀水莊 ➔ 天城路 ➔ Ole Inn) -->
+        <!-- 飯店卡片列表 -->
         <div class="space-y-2.5 pt-1">
             <h3 class="text-xs font-extrabold text-blue-950 uppercase tracking-wider pl-1 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-blue-600"></span> 住宿飯店安排
@@ -166,19 +163,39 @@
 
     <!-- PANEL 3: 記帳 -->
     <section id="panel-expense" class="space-y-3 hidden">
-        <div class="jp-card p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white space-y-1.5">
+        <div class="jp-card p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white space-y-2">
             <div class="text-xs text-slate-300 font-medium flex justify-between items-center">
-                <span>旅行總支出</span>
+                <span>旅行總支出（換算為日圓）</span>
                 <span class="w-2 h-2 rounded-full bg-orange-500"></span>
             </div>
-            <div class="flex justify-between items-baseline">
-                <span id="expense-total-jpy" class="text-2xl font-black text-orange-400">¥0</span>
-                <span id="expense-total-twd" class="text-xs font-semibold text-slate-300">約 NT$ 0</span>
+            <div id="expense-total-jpy" class="text-2xl font-black text-orange-400">¥0</div>
+            <div class="flex gap-3 text-xs font-semibold text-slate-300 pt-1 border-t border-slate-700">
+                <span id="expense-total-twd">約 NT$ 0</span>
+                <span id="expense-total-hkd">約 HK$ 0</span>
             </div>
         </div>
 
         <button onclick="openExpenseModal()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition">新增記帳</button>
         <div id="expense-list" class="space-y-2"></div>
+
+        <div class="jp-card p-3.5 space-y-3">
+            <h3 class="text-xs font-extrabold text-blue-950 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span> 匯率換算
+            </h3>
+            <div class="grid grid-cols-3 gap-2 text-[11px] text-center text-slate-500">
+                <div>日圓 (JPY)</div>
+                <div>台幣 (TWD)</div>
+                <div>港幣 (HKD)</div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <input type="number" id="fx-jpy" placeholder="JPY" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('jpy')">
+                <input type="number" id="fx-twd" placeholder="TWD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('twd')">
+                <input type="number" id="fx-hkd" placeholder="HKD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm font-bold text-center outline-none" oninput="convertFx('hkd')">
+            </div>
+            <div class="text-[10px] text-slate-400 text-center">
+                參考匯率：1 JPY ≈ 0.21 TWD ≈ 0.052 HKD
+            </div>
+        </div>
     </section>
 
     <!-- PANEL 4: 待辦與預返清單 -->
@@ -190,9 +207,9 @@
         <div id="todo-items" class="space-y-2"></div>
     </section>
 
-    <!-- 行程 Modal (新增/修改) -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3">
+    <!-- 行程 Modal -->
+    <div id="modal-backdrop" onclick="handleBackdropClick(event, 'modal-backdrop', closeModal)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <h3 id="modal-title" class="font-bold text-slate-900 text-sm">新增行程</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
@@ -232,6 +249,10 @@
                     <input type="text" id="form-title" required placeholder="請輸入行程名稱" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
                 </div>
                 <div>
+                    <label class="block font-bold text-slate-700 mb-1">預估車程 / 交通時間 (選填)</label>
+                    <input type="text" id="form-drive-time" placeholder="例: 車程約 45 分鐘 / 電車約 30 分鐘" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
+                </div>
+                <div>
                     <label class="block font-bold text-slate-700 mb-1">備註說明</label>
                     <textarea id="form-desc" rows="2" placeholder="備註詳細細節..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none resize-none"></textarea>
                 </div>
@@ -248,8 +269,8 @@
     </div>
 
     <!-- 記帳 Modal -->
-    <div id="modal-expense-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3">
+    <div id="modal-expense-backdrop" onclick="handleBackdropClick(event, 'modal-expense-backdrop', closeExpenseModal)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <h3 class="font-bold text-slate-900 text-sm">新增支出</h3>
                 <button onclick="closeExpenseModal()" class="text-slate-400 font-bold">✕</button>
@@ -261,19 +282,27 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">金額 (JPY) *</label>
+                        <label class="block font-bold text-slate-700 mb-1">金額 *</label>
                         <input type="number" id="expense-amount" required placeholder="金額" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">分類</label>
-                        <select id="expense-category" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
-                            <option value="餐飲">餐飲</option>
-                            <option value="交通">交通</option>
-                            <option value="購物">購物</option>
-                            <option value="住宿">住宿</option>
-                            <option value="門票">門票</option>
+                        <label class="block font-bold text-slate-700 mb-1">幣別</label>
+                        <select id="expense-currency" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
+                            <option value="JPY">日圓 (JPY)</option>
+                            <option value="TWD">台幣 (TWD)</option>
+                            <option value="HKD">港幣 (HKD)</option>
                         </select>
                     </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">分類</label>
+                    <select id="expense-category" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-900 outline-none">
+                        <option value="餐飲">餐飲</option>
+                        <option value="交通">交通</option>
+                        <option value="購物">購物</option>
+                        <option value="住宿">住宿</option>
+                        <option value="門票">門票</option>
+                    </select>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button type="button" onclick="closeExpenseModal()" class="flex-1 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl">取消</button>
@@ -284,8 +313,8 @@
     </div>
 
     <!-- 待辦 Modal -->
-    <div id="modal-todo-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3">
+    <div id="modal-todo-backdrop" onclick="handleBackdropClick(event, 'modal-todo-backdrop', closeTodoModal)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-slate-200 space-y-3" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <h3 class="font-bold text-slate-900 text-sm">新增準備/預返項目</h3>
                 <button onclick="closeTodoModal()" class="text-slate-400 font-bold">✕</button>
@@ -303,32 +332,99 @@
         </div>
     </div>
 
-    <script>
-        const weatherData = {
-            yokohama: { temp: '14°C', icon: '晴朗', fuji: '極佳 🗻' },
-            izukogen: { temp: '15°C', icon: '晴朗', fuji: '良好 🏔️' },
-            shuzenji: { temp: '12°C', icon: '多雲', fuji: '普通 ☁️' },
-            shizuoka: { temp: '16°C', icon: '晴朗', fuji: '絕佳 🗻' }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaRUEd3JXtyCu46s-IGfV4EgDw0H3hRZ0",
+            authDomain: "izu-travel-bdd98.firebaseapp.com",
+            projectId: "izu-travel-bdd98",
+            storageBucket: "izu-travel-bdd98.firebasestorage.app",
+            messagingSenderId: "34952484447",
+            appId: "1:34952484447:web:540386651b199df3cb2dea",
+            measurementId: "G-6V4T2N7WRY"
         };
+        
+        let db = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+        } catch (err) {
+            console.warn("Firebase 初始化失敗，切換至本地離線模式", err);
+        }
+
+        const locationCoords = {
+            yokohama: { lat: 35.4437, lon: 139.6380 },
+            izukogen: { lat: 34.8872, lon: 139.1028 },
+            shuzenji: { lat: 34.9723, lon: 138.9619 },
+            shizuoka: { lat: 34.9756, lon: 138.3828 }
+        };
+
+        function parseWeatherCode(code) {
+            if (code === 0) return { text: '晴朗 ☀️', fuji: '極佳 🗻' };
+            if (code === 1 || code === 2) return { text: '多雲時晴 ⛅', fuji: '良好 🏔️' };
+            if (code === 3) return { text: '陰天 ☁️', fuji: '普通 ☁️' };
+            if (code >= 45 && code <= 48) return { text: '起霧 🌫️', fuji: '較差 🌫️' };
+            if (code >= 51 && code <= 67) return { text: '有雨 🌧️', fuji: '不佳 ☔' };
+            if (code >= 80 && code <= 82) return { text: '陣雨 🌦️', fuji: '視情況 🌦️' };
+            if (code >= 95) return { text: '雷雨 ⛈️', fuji: '不可見 ⚡' };
+            return { text: '晴朗 ☀️', fuji: '良好 🏔️' };
+        }
+
+        window.updateWeather = async function() {
+            const locKey = document.getElementById('weather-location').value;
+            const coord = locationCoords[locKey];
+            
+            document.getElementById('weather-icon').innerText = '載入中...';
+            document.getElementById('weather-temp').innerText = '--°C';
+
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coord.lat}&longitude=${coord.lon}&current_weather=true`);
+                const data = await response.json();
+                
+                if (data && data.current_weather) {
+                    const temp = Math.round(data.current_weather.temperature);
+                    const weatherInfo = parseWeatherCode(data.current_weather.weathercode);
+
+                    document.getElementById('weather-temp').innerText = `${temp}°C`;
+                    document.getElementById('weather-icon').innerText = weatherInfo.text;
+                    document.getElementById('fuji-visibility').innerText = weatherInfo.fuji;
+                }
+            } catch (err) {
+                console.error("無法取得即時天氣資料:", err);
+                document.getElementById('weather-icon').innerText = '無法取得';
+                document.getElementById('weather-temp').innerText = '--°C';
+            }
+        }
 
         const dayDates = { 1: '12/03 三', 2: '12/04 四', 3: '12/05 五', 4: '12/06 六', 5: '12/07 日', 6: '12/08 一' };
         let currentDay = 1;
 
-        let itineraries = [
-            { id: 1, day: 1, time: '09:15-13:25', title: '台中飛往成田機場 (JX314)', tag: '航班', desc: '下機在機場找黑貓寄行李到湯澤', map: '成田機場' },
-            { id: 2, day: 1, time: '14:30', title: "搭乘 N'EX 前往橫濱", tag: '交通', desc: '直達橫濱車站', map: '橫濱車站' },
-            { id: 3, day: 1, time: '16:00', title: 'Check in JR東日本橫濱METS飯店', tag: '住宿', desc: '辦理入住', map: 'JR東日本橫濱METS飯店' },
-            { id: 4, day: 1, time: '18:30', title: '享用晚餐', tag: '美食', desc: '橫濱在地美食', map: '橫濱' },
-            { id: 5, day: 2, time: '01:25-06:30', title: '香港飛往東京成田 (CX524)', tag: '航班', desc: 'CX524 航班抵達', map: '成田機場' },
-            { id: 6, day: 2, time: '08:30', title: "N'EX 前往橫濱會合", tag: '交通', desc: '前往橫濱與夥伴會合', map: '橫濱車站' },
-            { id: 7, day: 2, time: '10:00', title: '取租車並開往伊豆', tag: '交通', desc: '自駕前往伊豆半島', map: '伊豆' },
-            { id: 8, day: 2, time: '15:00', title: '入住 稻取銀水莊', tag: '住宿', desc: '享受海景溫泉度假村', map: '稲取銀水荘' }
+        const defaultItineraries = [
+            { id: '1', day: 1, time: '09:15-13:25', title: '台中飛往成田機場 (JX314)', tag: '航班', driveTime: '', desc: '下機在機場找黑貓寄行李到湯澤', map: '成田機場' },
+            { id: '2', day: 1, time: '14:30', title: "搭乘 N'EX 前往橫濱", tag: '交通', driveTime: '搭車約 90 分鐘', desc: '直達橫濱車站', map: '橫濱車站' },
+            { id: '3', day: 1, time: '16:00', title: 'Check in JR東日本橫濱METS飯店', tag: '住宿', driveTime: '步行約 3 分鐘', desc: '辦理入住', map: 'JR東日本橫濱METS飯店' },
+            { id: '4', day: 1, time: '18:30', title: '享用晚餐', tag: '美食', driveTime: '', desc: '橫濱在地美食', map: '橫濱' },
+            { id: '5', day: 2, time: '01:25-06:30', title: '香港飛往東京成田 (CX524)', tag: '航班', driveTime: '', desc: 'CX524 航班抵達', map: '成田機場' },
+            { id: '6', day: 2, time: '08:30', title: "N'EX 前往橫濱會合", tag: '交通', driveTime: '搭車約 90 分鐘', desc: '前往橫濱與夥伴會合', map: '橫濱車站' },
+            { id: '7', day: 2, time: '10:00', title: '取租車並開往伊豆', tag: '交通', driveTime: '車程約 2 小時 30 分', desc: '自駕前往伊豆半島', map: '伊豆' },
+            { id: '8', day: 2, time: '15:00', title: '入住 稻取銀水莊', tag: '住宿', driveTime: '', desc: '享受海景溫泉度假村', map: '稲取銀水荘' }
         ];
 
-        try {
-            const saved = localStorage.getItem('izu_2026_itineraries');
-            if (saved) itineraries = JSON.parse(saved);
-        } catch(e) {}
+        const defaultTodos = [
+            { id: '1', text: '護照正本與有效期限確認', completed: true },
+            { id: '2', text: '日本網卡 / eSIM 購買', completed: false },
+            { id: '3', text: '黑貓宅急便行李寄送單準備', completed: false },
+            { id: '4', text: '駕照日文譯本與台灣駕照正本', completed: false },
+            { id: '5', text: '飯店預約確認單列印', completed: false },
+            { id: '6', text: '預返伴手禮與免稅品清單確認', completed: false },
+            { id: '7', text: '預返行李箱空間分配與秤重', completed: false }
+        ];
+
+        let itineraries = [...defaultItineraries];
+        let expenses = [];
+        let todos = [...defaultTodos];
 
         const hotelsList = [
             { name: 'JR東日本橫濱METS飯店', kana: 'JR東日本ホテルメッツ 横浜', desc: '神奈川縣橫濱市神奈川區鶴屋町1-66-9', dates: '12月3日 - 12月4日 (1晚)' },
@@ -337,53 +433,91 @@
             { name: 'Ole Inn 酒店', kana: 'ホテルオーレ イン', desc: '靜岡縣靜岡市葵區', dates: '12月6日 - 12月8日 (2晚)' }
         ];
 
-        let expenses = [];
-        try {
-            const savedExp = localStorage.getItem('izu_2026_expenses');
-            if (savedExp) expenses = JSON.parse(savedExp);
-        } catch(e) {}
-
-        let todos = [
-            { id: 1, text: '護照正本與有效期限確認', completed: true },
-            { id: 2, text: '日本網卡 / eSIM 購買', completed: false },
-            { id: 3, text: '黑貓宅急便行李寄送單準備', completed: false },
-            { id: 4, text: '駕照日文譯本與台灣駕照正本', completed: false },
-            { id: 5, text: '飯店預約確認單列印', completed: false },
-            { id: 6, text: '預返伴手禮與免稅品清單確認', completed: false },
-            { id: 7, text: '預返行李箱空間分配與秤重', completed: false }
-        ];
-        try {
-            const savedTodo = localStorage.getItem('izu_2026_todos');
-            if (savedTodo) todos = JSON.parse(savedTodo);
-        } catch(e) {}
-
-        function saveStorage() {
+        async function initCloudSync() {
+            if (!db) {
+                updateSyncUI(false, "OFFLINE");
+                renderItinerary();
+                return;
+            }
             try {
-                localStorage.setItem('izu_2026_itineraries', JSON.stringify(itineraries));
-                localStorage.setItem('izu_2026_expenses', JSON.stringify(expenses));
-                localStorage.setItem('izu_2026_todos', JSON.stringify(todos));
-            } catch(e) {}
+                // 先讀取一次雲端資料庫檢查是否為空
+                const querySnapshot = await getDocs(collection(db, "itineraries"));
+                if (querySnapshot.empty) {
+                    // 如果雲端完全沒有資料，才把預設行程初始化寫入雲端
+                    for (const item of defaultItineraries) {
+                        await setDoc(doc(db, "itineraries", String(item.id)), item);
+                    }
+                }
+
+                // 啟動即時監聽，確保不被舊紀錄覆蓋
+                onSnapshot(collection(db, "itineraries"), (snapshot) => {
+                    const cloudItems = [];
+                    snapshot.forEach(docSnap => {
+                        cloudItems.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    
+                    if (cloudItems.length > 0) {
+                        cloudItems.sort((a, b) => {
+                            if (Number(a.day) !== Number(b.day)) return Number(a.day) - Number(b.day);
+                            return (a.time || '').localeCompare(b.time || '');
+                        });
+                        itineraries = cloudItems;
+                    }
+                    updateSyncUI(true, "SYNCED");
+                    renderItinerary();
+                }, (error) => {
+                    console.warn("itineraries 讀取失敗", error);
+                    updateSyncUI(false, "OFFLINE");
+                    renderItinerary();
+                });
+
+                onSnapshot(collection(db, "expenses"), (snapshot) => {
+                    expenses = [];
+                    snapshot.forEach(docSnap => {
+                        expenses.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    renderExpenses();
+                }, (error) => console.warn("expenses 讀取失敗", error));
+
+                onSnapshot(collection(db, "todos"), (snapshot) => {
+                    const cloudTodos = [];
+                    snapshot.forEach(docSnap => {
+                        cloudTodos.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (cloudTodos.length > 0) {
+                        todos = cloudTodos;
+                    }
+                    renderTodos();
+                }, (error) => console.warn("todos 讀取失敗", error));
+
+            } catch (e) {
+                console.warn("雲端同步開啟失敗", e);
+                updateSyncUI(false, "OFFLINE");
+                renderItinerary();
+            }
         }
 
-        function updateWeather() {
-            const loc = document.getElementById('weather-location').value;
-            const data = weatherData[loc];
-            document.getElementById('weather-temp').innerText = data.temp;
-            document.getElementById('weather-icon').innerText = data.icon;
-            document.getElementById('fuji-visibility').innerText = data.fuji;
+        function updateSyncUI(online, text) {
+            const dot = document.getElementById('sync-dot');
+            const syncText = document.getElementById('sync-text');
+            if (dot) {
+                dot.className = online ? 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse' : 'w-1.5 h-1.5 rounded-full bg-amber-500';
+            }
+            if (syncText) {
+                syncText.innerText = online ? '已同步' : '離線模式';
+            }
         }
 
-        function switchMainTab(tab) {
+        window.switchMainTab = function(tab) {
             ['itinerary', 'hotel', 'expense', 'todolist'].forEach(t => {
                 document.getElementById(`panel-${t}`).classList.add('hidden');
                 document.getElementById(`tab-btn-${t}`).className = "py-2 rounded-lg transition text-slate-700 font-bold hover:text-slate-900";
             });
             document.getElementById(`panel-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tab}`).className = "py-2 rounded-lg transition text-blue-950 bg-white border border-slate-200 shadow-sm font-bold";
-
-            if(tab === 'hotel') renderHotels();
-            if(tab === 'expense') renderExpenses();
-            if(tab === 'todolist') renderTodos();
+            if (tab === 'hotel') renderHotels();
+            if (tab === 'expense') renderExpenses();
+            if (tab === 'todolist') renderTodos();
         }
 
         function renderDayTabs() {
@@ -391,14 +525,16 @@
             let html = '';
             for (let i = 1; i <= 6; i++) {
                 const active = i === currentDay ? 'text-blue-950 border-b-2 border-orange-500 font-black' : 'text-slate-500 hover:text-slate-800';
-                html += `<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">
-                    Day ${i} (${dayDates[i]})
-                </button>`;
+                html += `<button onclick="selectDay(${i})" class="px-3 py-1 text-xs font-bold whitespace-nowrap transition ${active}">Day ${i} (${dayDates[i]})</button>`;
             }
             container.innerHTML = html;
         }
 
-        function selectDay(day) { currentDay = day; renderDayTabs(); renderItinerary(); }
+        window.selectDay = function(day) {
+            currentDay = day;
+            renderDayTabs();
+            renderItinerary();
+        }
 
         function renderItinerary() {
             const container = document.getElementById('itinerary-timeline');
@@ -407,18 +543,26 @@
                 container.innerHTML = `<div class="jp-card p-5 text-center text-xs text-slate-500 font-medium ml-1">本日尚無行程</div>`;
                 return;
             }
-            container.innerHTML = filtered.map(item => {
+            container.innerHTML = filtered.map((item, idx) => {
                 const tagColor = item.tag === '景點' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
                                  item.tag === '交通' ? 'bg-amber-50 text-amber-800 border-amber-200' :
                                  item.tag === '美食' ? 'bg-rose-50 text-rose-800 border-rose-200' :
                                  item.tag === '住宿' ? 'bg-purple-50 text-purple-800 border-purple-200' : 'bg-blue-50 text-blue-900 border-blue-200';
-
                 const mapBtn = item.map ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100">地圖</a>` : '';
+                
+                // 行程之間的車程 / 交通時間標籤（顯示於卡片下方外側）
+                const driveInfoBadge = item.driveTime ? `
+                    <div class="my-2.5 pl-3 flex items-center gap-1.5 text-[11px] font-bold text-amber-800">
+                        <span class="bg-amber-100/90 border border-amber-300 px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                            🚗 <span>${item.driveTime}</span>
+                        </span>
+                    </div>
+                ` : '';
 
                 return `
                     <div class="relative pl-3">
                         <div class="absolute -left-[16px] top-3.5 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-white ring-2 ring-orange-200"></div>
-                        <div class="jp-card p-3.5 space-y-1.5">
+                        <div class="jp-card p-3.5 space-y-2">
                             <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-blue-950">${item.time || '全天'}</span>
@@ -426,28 +570,30 @@
                                 </div>
                                 <div class="flex items-center gap-2 text-xs">
                                     ${mapBtn}
-                                    <button onclick="openEditModal(${item.id})" class="text-slate-600 hover:text-blue-900 font-bold">修改</button>
-                                    <button onclick="deleteItinerary(${item.id})" class="text-slate-400 hover:text-rose-600 font-bold">刪除</button>
+                                    <button onclick="openEditModal('${item.id}')" class="text-slate-600 hover:text-blue-900 font-bold">修改</button>
+                                    <button onclick="deleteItinerary('${item.id}')" class="text-slate-400 hover:text-rose-600 font-bold">刪除</button>
                                 </div>
                             </div>
                             <h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>
                             ${item.desc ? `<p class="text-xs text-slate-600 leading-relaxed">${item.desc}</p>` : ''}
                         </div>
+                        ${driveInfoBadge}
                     </div>
                 `;
             }).join('');
         }
 
-        function openAddModal() {
+        window.openAddModal = function() {
             document.getElementById('modal-title').innerText = '新增行程';
             document.getElementById('itinerary-form').reset();
             document.getElementById('form-item-id').value = '';
             document.getElementById('form-day').value = currentDay;
+            document.getElementById('form-drive-time').value = '';
             document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
-        function openEditModal(id) {
-            const item = itineraries.find(i => i.id === id);
+        window.openEditModal = function(id) {
+            const item = itineraries.find(i => String(i.id) === String(id));
             if (!item) return;
             document.getElementById('modal-title').innerText = '編輯行程';
             document.getElementById('form-item-id').value = item.id;
@@ -455,40 +601,74 @@
             document.getElementById('form-time').value = item.time || '';
             document.getElementById('form-tag').value = item.tag || '景點';
             document.getElementById('form-title').value = item.title;
+            document.getElementById('form-drive-time').value = item.driveTime || item.drive_time || '';
             document.getElementById('form-desc').value = item.desc || '';
             document.getElementById('form-map').value = item.map || '';
             document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('modal-backdrop').classList.add('hidden'); }
+        window.closeModal = function() {
+            document.getElementById('modal-backdrop').classList.add('hidden');
+        }
 
-        function saveItinerary(e) {
+        window.handleBackdropClick = function(event, backdropId, closeFn) {
+            if (event.target.id === backdropId) {
+                closeFn();
+            }
+        }
+
+        window.saveItinerary = async function(e) {
             e.preventDefault();
-            const id = document.getElementById('form-item-id').value;
+            const existingId = document.getElementById('form-item-id').value;
+            const id = existingId ? String(existingId) : ('it_' + Date.now());
+            const driveTimeValue = document.getElementById('form-drive-time').value.trim();
+            
             const data = {
-                id: id ? Number(id) : Date.now(),
+                id: id,
                 day: Number(document.getElementById('form-day').value),
                 time: document.getElementById('form-time').value.trim(),
                 tag: document.getElementById('form-tag').value,
                 title: document.getElementById('form-title').value.trim(),
+                driveTime: driveTimeValue,
+                drive_time: driveTimeValue,
                 desc: document.getElementById('form-desc').value.trim(),
                 map: document.getElementById('form-map').value.trim()
             };
-            if(id) {
-                const idx = itineraries.findIndex(i => i.id === Number(id));
-                if(idx !== -1) itineraries[idx] = data;
+            
+            if (existingId) {
+                const idx = itineraries.findIndex(i => String(i.id) === String(existingId));
+                if (idx !== -1) itineraries[idx] = data;
             } else {
                 itineraries.push(data);
             }
-            saveStorage();
+            itineraries.sort((a, b) => {
+                if (Number(a.day) !== Number(b.day)) return Number(a.day) - Number(b.day);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+
+            renderItinerary();
             closeModal();
             selectDay(data.day);
+
+            if (db) {
+                try {
+                    await setDoc(doc(db, "itineraries", id), data, { merge: true });
+                } catch (err) {
+                    console.error("行程儲存雲端失敗:", err);
+                }
+            }
         }
 
-        function deleteItinerary(id) {
-            itineraries = itineraries.filter(i => i.id !== id);
-            saveStorage();
+        window.deleteItinerary = async function(id) {
+            if (!confirm("確定要刪除此行程嗎？")) return;
+            itineraries = itineraries.filter(i => String(i.id) !== String(id));
             renderItinerary();
+
+            if (db) {
+                try {
+                    await deleteDoc(doc(db, "itineraries", String(id)));
+                } catch (err) { console.error(err); }
+            }
         }
 
         function renderHotels() {
@@ -513,73 +693,170 @@
             }).join('');
         }
 
+        const FX = { JPY: 1, TWD: 0.21, HKD: 0.052 };
+
         function renderExpenses() {
             const list = document.getElementById('expense-list');
-            let total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-            list.innerHTML = expenses.length === 0 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>` : expenses.map(e => `
-                <div class="jp-card p-3 flex justify-between items-center text-xs">
-                    <div>
-                        <div class="font-bold text-slate-900 text-sm">${e.title}</div>
-                        <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-black text-orange-600 text-sm">¥${Number(e.amount).toLocaleString()}</span>
-                        <button onclick="deleteExpense(${e.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('expense-total-jpy').innerText = `¥${total.toLocaleString()}`;
-            document.getElementById('expense-total-twd').innerText = `約 NT$ ${Math.round(total * 0.21).toLocaleString()}`;
+            let totalJPY = expenses.reduce((sum, e) => {
+                const cur = (e.currency || 'JPY').toUpperCase();
+                let jpy = Number(e.amount) || 0;
+                if (cur === 'TWD') jpy /= FX.TWD;
+                if (cur === 'HKD') jpy /= FX.HKD;
+                return sum + jpy;
+            }, 0);
+
+            list.innerHTML = expenses.length === 0
+                ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無記帳紀錄</div>`
+                : expenses.map(e => {
+                    const cur = (e.currency || 'JPY').toUpperCase();
+                    const amt = Number(e.amount) || 0;
+
+                    let jpyAmt = amt, twdAmt = amt, hkdAmt = amt;
+                    if (cur === 'JPY') {
+                        jpyAmt = amt;
+                        twdAmt = amt * FX.TWD;
+                        hkdAmt = amt * FX.HKD;
+                    } else if (cur === 'TWD') {
+                        jpyAmt = amt / FX.TWD;
+                        twdAmt = amt;
+                        hkdAmt = (amt / FX.TWD) * FX.HKD;
+                    } else if (cur === 'HKD') {
+                        jpyAmt = amt / FX.HKD;
+                        twdAmt = (amt / FX.HKD) * FX.TWD;
+                        hkdAmt = amt;
+                    }
+
+                    let convertedStr = '';
+                    if (cur === 'JPY') {
+                        convertedStr = `NT$ ${Math.round(twdAmt).toLocaleString()} • HK$ ${Math.round(hkdAmt).toLocaleString()}`;
+                    } else if (cur === 'TWD') {
+                        convertedStr = `¥${Math.round(jpyAmt).toLocaleString()} • HK$ ${Math.round(hkdAmt).toLocaleString()}`;
+                    } else if (cur === 'HKD') {
+                        convertedStr = `¥${Math.round(jpyAmt).toLocaleString()} • NT$ ${Math.round(twdAmt).toLocaleString()}`;
+                    }
+
+                    const symbol = cur === 'TWD' ? 'NT$' : cur === 'HKD' ? 'HK$' : '¥';
+                    return `
+                    <div class="jp-card p-3 space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-slate-900 text-sm">${e.title}</div>
+                                <div class="flex gap-1.5 mt-0.5">
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
+                                    <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">${cur}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-orange-600 text-sm">${symbol}${amt.toLocaleString()}</span>
+                                <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 text-[10px] text-slate-500 pt-1 border-t border-slate-100 justify-end font-medium">
+                            <span>${convertedStr}</span>
+                        </div>
+                    </div>`;
+                }).join('');
+
+            document.getElementById('expense-total-jpy').innerText = `¥${Math.round(totalJPY).toLocaleString()}`;
+            document.getElementById('expense-total-twd').innerText = `約 NT$ ${Math.round(totalJPY * FX.TWD).toLocaleString()}`;
+            document.getElementById('expense-total-hkd').innerText = `約 HK$ ${Math.round(totalJPY * FX.HKD).toLocaleString()}`;
         }
 
-        function openExpenseModal() { document.getElementById('modal-expense-backdrop').classList.remove('hidden'); }
-        function closeExpenseModal() { document.getElementById('modal-expense-backdrop').classList.add('hidden'); }
-        function saveExpense(e) {
+        window.convertFx = function(from) {
+            const jpyEl = document.getElementById('fx-jpy');
+            const twdEl = document.getElementById('fx-twd');
+            const hkdEl = document.getElementById('fx-hkd');
+            let jpy = 0;
+            if (from === 'jpy') jpy = Number(jpyEl.value) || 0;
+            else if (from === 'twd') jpy = (Number(twdEl.value) || 0) / FX.TWD;
+            else if (from === 'hkd') jpy = (Number(hkdEl.value) || 0) / FX.HKD;
+
+            if (from !== 'jpy') jpyEl.value = jpy ? Math.round(jpy) : '';
+            if (from !== 'twd') twdEl.value = jpy ? Math.round(jpy * FX.TWD) : '';
+            if (from !== 'hkd') hkdEl.value = jpy ? Math.round(jpy * FX.HKD) : '';
+        }
+
+        window.openExpenseModal = function() { document.getElementById('modal-expense-backdrop').classList.remove('hidden'); }
+        window.closeExpenseModal = function() { document.getElementById('modal-expense-backdrop').classList.add('hidden'); }
+        window.saveExpense = async function(e) {
             e.preventDefault();
-            expenses.push({
-                id: Date.now(),
+            const id = 'exp_' + Date.now();
+            const data = {
+                id: id,
                 title: document.getElementById('expense-title').value.trim(),
                 amount: Number(document.getElementById('expense-amount').value),
+                currency: document.getElementById('expense-currency').value,
                 category: document.getElementById('expense-category').value
-            });
-            saveStorage();
-            closeExpenseModal();
+            };
+            expenses.push(data);
             renderExpenses();
+            closeExpenseModal();
             document.getElementById('expense-title').value = '';
             document.getElementById('expense-amount').value = '';
+
+            if (db) {
+                try { await setDoc(doc(db, "expenses", id), data); } catch (err) { console.error(err); }
+            }
         }
-        function deleteExpense(id) { expenses = expenses.filter(e => e.id !== id); saveStorage(); renderExpenses(); }
+        window.deleteExpense = async function(id) {
+            if (!confirm("確定要刪除這筆記帳嗎？")) return;
+            expenses = expenses.filter(e => String(e.id) !== String(id));
+            renderExpenses();
+            if (db) {
+                try { await deleteDoc(doc(db, "expenses", String(id))); } catch (err) { console.error(err); }
+            }
+        }
 
         function renderTodos() {
             const container = document.getElementById('todo-items');
-            container.innerHTML = todos.length === 0 ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無準備項目</div>` : todos.map(t => `
-                <div class="jp-card p-3 flex justify-between items-center text-xs">
-                    <label class="flex items-center gap-2 cursor-pointer flex-1">
-                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 rounded text-orange-600">
-                        <span class="font-bold text-xs ${t.completed ? 'line-through text-slate-400' : 'text-slate-900'}">${t.text}</span>
-                    </label>
-                    <button onclick="deleteTodo(${t.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                </div>
-            `).join('');
+            container.innerHTML = todos.length === 0
+                ? `<div class="jp-card p-4 text-center text-xs text-slate-500">尚無準備項目</div>`
+                : todos.map(t => `
+                    <div class="jp-card p-3 flex justify-between items-center text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer flex-1">
+                            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo('${t.id}')" class="w-4 h-4 rounded text-orange-600">
+                            <span class="font-bold text-xs ${t.completed ? 'line-through text-slate-400' : 'text-slate-900'}">${t.text}</span>
+                        </label>
+                        <button onclick="deleteTodo('${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                    </div>
+                `).join('');
         }
 
-        function openTodoModal() { document.getElementById('modal-todo-backdrop').classList.remove('hidden'); }
-        function closeTodoModal() { document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
-        function saveTodo(e) {
+        window.openTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.remove('hidden'); }
+        window.closeTodoModal = function() { document.getElementById('modal-todo-backdrop').classList.add('hidden'); }
+        window.saveTodo = async function(e) {
             e.preventDefault();
-            todos.push({ id: Date.now(), text: document.getElementById('todo-text').value.trim(), completed: false });
-            saveStorage();
-            closeTodoModal();
+            const id = 'todo_' + Date.now();
+            const data = { id: id, text: document.getElementById('todo-text').value.trim(), completed: false };
+            todos.push(data);
             renderTodos();
+            closeTodoModal();
             document.getElementById('todo-text').value = '';
-        }
-        function toggleTodo(id) { const t = todos.find(item => item.id === id); if(t) { t.completed = !t.completed; saveStorage(); renderTodos(); } }
-        function deleteTodo(id) { todos = todos.filter(t => t.id !== id); saveStorage(); renderTodos(); }
 
-        window.onload = function() {
-            renderDayTabs();
-            renderItinerary();
-        };
+            if (db) {
+                try { await setDoc(doc(db, "todos", id), data); } catch (err) { console.error(err); }
+            }
+        }
+        window.toggleTodo = async function(id) {
+            const t = todos.find(item => String(item.id) === String(id));
+            if (!t) return;
+            t.completed = !t.completed;
+            renderTodos();
+            if (db) {
+                try { await setDoc(doc(db, "todos", String(id)), { text: t.text, completed: t.completed }, { merge: true }); } catch (err) { console.error(err); }
+            }
+        }
+        window.deleteTodo = async function(id) {
+            todos = todos.filter(t => String(t.id) !== String(id));
+            renderTodos();
+            if (db) {
+                try { await deleteDoc(doc(db, "todos", String(id))); } catch (err) { console.error(err); }
+            }
+        }
+
+        renderDayTabs();
+        window.updateWeather();
+        initCloudSync();
     </script>
 </body>
 </html>
