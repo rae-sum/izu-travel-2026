@@ -304,6 +304,10 @@
                         <option value="門票">門票</option>
                     </select>
                 </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="expense-paid" class="w-4 h-4 rounded text-slate-600 focus:ring-slate-400 cursor-pointer">
+                    <label for="expense-paid" class="font-bold text-slate-700 cursor-pointer">標示為「已付」</label>
+                </div>
                 <div class="flex gap-2 pt-2">
                     <button type="button" onclick="closeExpenseModal()" class="flex-1 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl">取消</button>
                     <button type="submit" class="flex-1 py-2 bg-orange-600 text-white font-bold rounded-xl">新增</button>
@@ -660,7 +664,6 @@
         }
 
         window.deleteItinerary = async function(id) {
-            if (!confirm("確定要刪除此行程嗎？")) return;
             itineraries = itineraries.filter(i => String(i.id) !== String(id));
             renderItinerary();
 
@@ -736,22 +739,29 @@
                     }
 
                     const symbol = cur === 'TWD' ? 'NT$' : cur === 'HKD' ? 'HK$' : '¥';
+
                     return `
                     <div class="jp-card p-3 space-y-1.5 text-xs">
                         <div class="flex justify-between items-center">
                             <div>
-                                <div class="font-bold text-slate-900 text-sm">${e.title}</div>
-                                <div class="flex gap-1.5 mt-0.5">
+                                <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                                    <span>${e.title}</span>
+                                </div>
+                                <div class="flex gap-1.5 mt-1">
                                     <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${e.category || ''}</span>
                                     <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">${cur}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="font-black text-orange-600 text-sm">${symbol}${amt.toLocaleString()}</span>
-                                <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                                <button onclick="deleteExpense('${e.id}')" class="text-slate-400 hover:text-rose-600 font-bold px-1 py-0.5">✕</button>
                             </div>
                         </div>
-                        <div class="flex gap-2 text-[10px] text-slate-500 pt-1 border-t border-slate-100 justify-end font-medium">
+                        <div class="flex justify-between items-center pt-1.5 border-t border-slate-100 text-[10px] text-slate-500 font-medium">
+                            <label class="flex items-center gap-1.5 cursor-pointer text-slate-600 select-none">
+                                <input type="checkbox" ${e.paid ? 'checked' : ''} onchange="toggleExpensePaid('${e.id}')" class="w-3.5 h-3.5 rounded border-slate-300 text-slate-700 focus:ring-slate-400 cursor-pointer">
+                                <span>已付</span>
+                            </label>
                             <span>${convertedStr}</span>
                         </div>
                     </div>`;
@@ -786,20 +796,30 @@
                 title: document.getElementById('expense-title').value.trim(),
                 amount: Number(document.getElementById('expense-amount').value),
                 currency: document.getElementById('expense-currency').value,
-                category: document.getElementById('expense-category').value
+                category: document.getElementById('expense-category').value,
+                paid: document.getElementById('expense-paid').checked
             };
             expenses.push(data);
             renderExpenses();
             closeExpenseModal();
             document.getElementById('expense-title').value = '';
             document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-paid').checked = false;
 
             if (db) {
                 try { await setDoc(doc(db, "expenses", id), data); } catch (err) { console.error(err); }
             }
         }
+        window.toggleExpensePaid = async function(id) {
+            const exp = expenses.find(e => String(e.id) === String(id));
+            if (!exp) return;
+            exp.paid = !exp.paid;
+            renderExpenses();
+            if (db) {
+                try { await setDoc(doc(db, "expenses", String(id)), { paid: exp.paid }, { merge: true }); } catch (err) { console.error(err); }
+            }
+        }
         window.deleteExpense = async function(id) {
-            if (!confirm("確定要刪除這筆記帳嗎？")) return;
             expenses = expenses.filter(e => String(e.id) !== String(id));
             renderExpenses();
             if (db) {
